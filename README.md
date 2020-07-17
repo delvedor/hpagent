@@ -64,6 +64,27 @@ http.get('http://localhost:9200', { agent })
     .end()
 ```
 
+## Integrations
+
+Following you can find the list of userland http libraries that are tested with this agent.
+
+### [got](https://github.com/sindresorhus/got)
+
+```js
+got('http://localhost:9200', {
+  agent: {
+    http: new HttpProxyAgent({
+      keepAlive: true,
+      keepAliveMsecs: 1000,
+      maxSockets: 256,
+      maxFreeSockets: 256,
+      scheduling: 'lifo',
+      proxy: 'http://localhost:8080'
+    })
+  }
+})
+```
+
 ## License
 
 This software is licensed under the [MIT](./LICENSE).
