@@ -19,12 +19,13 @@ class HttpProxyAgent extends http.Agent {
       host: this.proxy.hostname,
       port: this.proxy.port,
       path: `${options.host}:${options.port}`,
+      headers: { connection: this.keepAlive ? 'keep-alive' : 'close' },
       agent: false
     }
 
     if (this.proxy.username != null && this.proxy.password != null) {
       const base64 = Buffer.from(`${this.proxy.username}:${this.proxy.password}`).toString('base64')
-      requestOptions.headers = { 'proxy-authorization': `Basic ${base64}` }
+      requestOptions.headers['proxy-authorization'] = `Basic ${base64}`
     }
 
     const request = (this.proxy.protocol === 'http:' ? http : https).request(requestOptions)
@@ -62,12 +63,13 @@ class HttpsProxyAgent extends https.Agent {
       host: this.proxy.hostname,
       port: this.proxy.port,
       path: `${options.host}:${options.port}`,
+      headers: { connection: this.keepAlive ? 'keep-alive' : 'close' },
       agent: false
     }
 
     if (this.proxy.username != null && this.proxy.password != null) {
       const base64 = Buffer.from(`${this.proxy.username}:${this.proxy.password}`).toString('base64')
-      requestOptions.headers = { 'proxy-authorization': `Basic ${base64}` }
+      requestOptions.headers['proxy-authorization'] = `Basic ${base64}`
     }
 
     const request = (this.proxy.protocol === 'http:' ? http : https).request(requestOptions)

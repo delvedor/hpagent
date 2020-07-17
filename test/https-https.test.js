@@ -49,6 +49,82 @@ test('Basic', async t => {
   proxy.close()
 })
 
+test('Connection header (keep-alive)', async t => {
+  const server = await createSecureServer()
+  const proxy = await createSecureProxy()
+  server.on('request', (req, res) => res.end('ok'))
+
+  proxy.authenticate = function (req, fn) {
+    t.is(req.headers.connection, 'keep-alive')
+    fn(null, true)
+  }
+
+  const response = await request({
+    method: 'GET',
+    hostname: server.address().address,
+    port: server.address().port,
+    path: '/',
+    agent: new HttpsProxyAgent({
+      keepAlive: true,
+      keepAliveMsecs: 1000,
+      maxSockets: 256,
+      maxFreeSockets: 256,
+      scheduling: 'lifo',
+      proxy: `https://${proxy.address().address}:${proxy.address().port}`
+    })
+  })
+
+  let body = ''
+  response.setEncoding('utf8')
+  for await (const chunk of response) {
+    body += chunk
+  }
+
+  t.is(body, 'ok')
+  t.is(response.statusCode, 200)
+
+  server.close()
+  proxy.close()
+})
+
+test('Connection header (close)', async t => {
+  const server = await createSecureServer()
+  const proxy = await createSecureProxy()
+  server.on('request', (req, res) => res.end('ok'))
+
+  proxy.authenticate = function (req, fn) {
+    t.is(req.headers.connection, 'close')
+    fn(null, true)
+  }
+
+  const response = await request({
+    method: 'GET',
+    hostname: server.address().address,
+    port: server.address().port,
+    path: '/',
+    agent: new HttpsProxyAgent({
+      keepAlive: false,
+      keepAliveMsecs: 1000,
+      maxSockets: Infinity,
+      maxFreeSockets: 256,
+      scheduling: 'lifo',
+      proxy: `https://${proxy.address().address}:${proxy.address().port}`
+    })
+  })
+
+  let body = ''
+  response.setEncoding('utf8')
+  for await (const chunk of response) {
+    body += chunk
+  }
+
+  t.is(body, 'ok')
+  t.is(response.statusCode, 200)
+
+  server.close()
+  proxy.close()
+})
+
 test('Proxy authentication', async t => {
   const server = await createSecureServer()
   const proxy = await createSecureProxy()
