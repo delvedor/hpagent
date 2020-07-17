@@ -100,6 +100,21 @@ needle('get', 'http://localhost:9200', {
 })
 ```
 
+### [node-fetch](https://github.com/node-fetch/node-fetch)
+
+```js
+fetch('http://localhost:9200', {
+  agent: new HttpProxyAgent({
+    keepAlive: true,
+    keepAliveMsecs: 1000,
+    maxSockets: 256,
+    maxFreeSockets: 256,
+    scheduling: 'lifo',
+    proxy: 'http://localhost:8080'
+  })
+})
+```
+
 ## License
 
 This software is licensed under the [MIT](./LICENSE).
