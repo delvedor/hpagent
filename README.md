@@ -22,6 +22,9 @@ The following table will help you picking the right one.
 | `HttpsProxyAgent` | HTTP   | HTTPS  |
 | `HttpsProxyAgent` | HTTPS  | HTTPS  |
 
+```js
+const { HttpProxyAgent, HttpsProxyAgent } = require('hpagent')
+```
 
 Once you have understood the right agent for your use case, you can instance it. It takes the same parameter of the Node.js core's http(s) agent and an additional `proxy` option, which is the url of your proxy.
 
