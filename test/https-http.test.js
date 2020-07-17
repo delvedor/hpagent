@@ -1,8 +1,5 @@
 'use strict'
 
-// We are using self-signed certificates
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0
-
 const http = require('http')
 const test = require('ava')
 const { createServer, createSecureProxy } = require('./utils')
