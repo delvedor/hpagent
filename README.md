@@ -115,6 +115,24 @@ fetch('http://localhost:9200', {
 })
 ```
 
+### [simple-get](https://github.com/feross/simple-get)
+
+```js
+sget.concat({
+  url: `http://${server.address().address}:${server.address().port}`,
+  agent: new HttpProxyAgent({
+    keepAlive: true,
+    keepAliveMsecs: 1000,
+    maxSockets: 256,
+    maxFreeSockets: 256,
+    scheduling: 'lifo',
+    proxy: `https://${proxy.address().address}:${proxy.address().port}`
+  })
+}, function (err, response, data) {
+  // handle the response
+})
+```
+
 ## License
 
 This software is licensed under the [MIT](./LICENSE).
