@@ -43,7 +43,7 @@
     "node-fetch": "^2.6.0",
     "proxy": "^1.0.2",
     "simple-get": "^4.0.0",
-    "standard": "^14.3.4",
+    "standard": "^16.0.1",
     "tsd": "^0.13.1"
   }
 }
