@@ -274,3 +274,41 @@ test('Configure the agent to NOT reuse sockets', async t => {
   server.close()
   proxy.close()
 })
+
+test('Test Host Header', async t => {
+  const server = await createServer()
+  const proxy = await createProxy()
+  server.on('request', (req, res) => res.end('ok'))
+
+  proxy.authenticate = function (req, fn) {
+    t.is(req.headers.host, `${server.address().address}:${server.address().port}`)
+    fn(null, true)
+  }
+
+  const response = await request({
+    method: 'GET',
+    hostname: server.address().address,
+    port: server.address().port,
+    path: '/',
+    agent: new HttpProxyAgent({
+      keepAlive: true,
+      keepAliveMsecs: 1000,
+      maxSockets: 256,
+      maxFreeSockets: 256,
+      scheduling: 'lifo',
+      proxy: `http://${proxy.address().address}:${proxy.address().port}`
+    })
+  })
+
+  let body = ''
+  response.setEncoding('utf8')
+  for await (const chunk of response) {
+    body += chunk
+  }
+
+  t.is(body, 'ok')
+  t.is(response.statusCode, 200)
+
+  server.close()
+  proxy.close()
+})
