@@ -19,7 +19,8 @@ class HttpProxyAgent extends http.Agent {
       host: this.proxy.hostname,
       port: this.proxy.port,
       path: `${options.host}:${options.port}`,
-      headers: { connection: this.keepAlive ? 'keep-alive' : 'close' },
+      setHost: false,
+      headers: { connection: this.keepAlive ? 'keep-alive' : 'close', host: `${options.host}:${options.port}` },
       agent: false
     }
 
@@ -63,7 +64,8 @@ class HttpsProxyAgent extends https.Agent {
       host: this.proxy.hostname,
       port: this.proxy.port,
       path: `${options.host}:${options.port}`,
-      headers: { connection: this.keepAlive ? 'keep-alive' : 'close' },
+      setHost: false,
+      headers: { connection: this.keepAlive ? 'keep-alive' : 'close', host: `${options.host}:${options.port}` },
       agent: false
     }
 
