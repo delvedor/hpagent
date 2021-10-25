@@ -43,3 +43,16 @@ import {
     agent
   })
 }
+
+{
+  const agent = new HttpsProxyAgent({
+    keepAlive: true,
+    keepAliveMsecs: 1000,
+    maxSockets: 256,
+    maxFreeSockets: 256,
+    proxy: 'http://localhost:8080',
+    noProxy: 'localhost*'
+  })
+
+  expectType<HttpsProxyAgent>(agent)
+}

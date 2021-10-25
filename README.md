@@ -64,6 +64,14 @@ http.get('http://localhost:9200', { agent })
     .end()
 ```
 
+## Environment variables
+
+By default the Agent supports the standard proxy in the following order:
+```
+https_proxy || HTTPS_PROXY || http_proxy || HTTP_PROXY
+```
+Also `no_proxy` environment variable is supported to add exceptions.
+
 ## Integrations
 
 Following you can find the list of userland http libraries that are tested with this agent.
