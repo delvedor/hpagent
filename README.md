@@ -66,7 +66,7 @@ http.get('http://localhost:9200', { agent })
 
 ## Environment variables
 
-By default the Agent supports the standard proxy in the following order:
+By default the Agent supports set the proxy by an environment variable in the following order:
 ```
 https_proxy || HTTPS_PROXY || http_proxy || HTTP_PROXY
 ```
