@@ -21,7 +21,8 @@ class HttpProxyAgent extends http.Agent {
       path: `${options.host}:${options.port}`,
       setHost: false,
       headers: { connection: this.keepAlive ? 'keep-alive' : 'close', host: `${options.host}:${options.port}` },
-      agent: false
+      agent: false,
+      timeout: options.timeout,
     }
 
     if (this.proxy.username || this.proxy.password) {
@@ -38,6 +39,12 @@ class HttpProxyAgent extends http.Agent {
       } else {
         callback(new Error(`Bad response: ${response.statusCode}`), null)
       }
+    })
+
+    request.once('timeout', () => {
+      const e = new Error(`connect proxy ${this.proxy.toString()} timeout`)
+      e.code = 'EPROXYTIMEOUT'
+      request.destroy(e);
     })
 
     request.once('error', err => {
@@ -66,7 +73,8 @@ class HttpsProxyAgent extends https.Agent {
       path: `${options.host}:${options.port}`,
       setHost: false,
       headers: { connection: this.keepAlive ? 'keep-alive' : 'close', host: `${options.host}:${options.port}` },
-      agent: false
+      agent: false,
+      timeout: options.timeout,
     }
 
     if (this.proxy.username || this.proxy.password) {
@@ -84,6 +92,12 @@ class HttpsProxyAgent extends https.Agent {
       } else {
         callback(new Error(`Bad response: ${response.statusCode}`), null)
       }
+    })
+
+    request.once('timeout', () => {
+      const e = new Error(`connect proxy ${this.proxy.toString()} timeout`)
+      e.code = 'EPROXYTIMEOUT'
+      request.destroy(e);
     })
 
     request.once('error', err => {

@@ -37,7 +37,9 @@ const agent = new HttpProxyAgent({
   keepAliveMsecs: 1000,
   maxSockets: 256,
   maxFreeSockets: 256,
-  proxy: 'http://localhost:8080'
+  proxy: 'http://localhost:8080',
+  // proxy connect timeout in milliseconds 
+  timeout: 1000,
 })
 
 http.get('http://localhost:9200', { agent })
