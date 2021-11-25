@@ -109,3 +109,28 @@ test('https to https', async t => {
   server.close()
   proxy.close()
 })
+
+test('timeout', async t => {
+  const server = await createSecureServer()
+  server.on('request', (req, res) => res.end('ok'))
+
+  try {
+    await got(`https://${server.address().address}:${server.address().port}`, {
+      agent: {
+        https: new HttpsProxyAgent({
+          keepAlive: true,
+          keepAliveMsecs: 1000,
+          maxSockets: 256,
+          maxFreeSockets: 256,
+          scheduling: 'lifo',
+          proxy: `http://1.1.1.1:1111`,
+          timeout: 100,
+        })
+      }
+    })
+  } catch (e) {
+    t.is(e.code, 'EPROXYTIMEOUT')
+  }
+
+  server.close()
+})

@@ -12,7 +12,8 @@
     "./": "./"
   },
   "scripts": {
-    "test": "standard && ava -v test/*.test.js && tsd"
+    "test": "standard && ava -v test/*.test.js && tsd",
+    "test-got": "ava -v test/got.test.js && tsd"
   },
   "repository": {
     "type": "git",
