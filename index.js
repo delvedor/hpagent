@@ -73,6 +73,11 @@ class HttpsProxyAgent extends https.Agent {
       const base64 = Buffer.from(`${this.proxy.username || ''}:${this.proxy.password || ''}`).toString('base64')
       requestOptions.headers['proxy-authorization'] = `Basic ${base64}`
     }
+    
+    // Necessary for the TLS check with the proxy to succeed.
+    if (this.proxy.protocol === 'https:') {
+      requestOptions.servername = this.proxy.hostname;
+    }
 
     const request = (this.proxy.protocol === 'http:' ? http : https).request(requestOptions)
     request.once('connect', (response, socket, head) => {
