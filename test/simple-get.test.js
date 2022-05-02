@@ -6,7 +6,9 @@ const {
   createServer,
   createSecureServer,
   createProxy,
-  createSecureProxy
+  createSecureProxy,
+  PROXY_HOSTNAME,
+  SERVER_HOSTNAME
 } = require('./utils')
 const { HttpProxyAgent, HttpsProxyAgent } = require('..')
 
@@ -56,7 +58,7 @@ test('https to http', async t => {
         maxSockets: 256,
         maxFreeSockets: 256,
         scheduling: 'lifo',
-        proxy: `https://${proxy.address().address}:${proxy.address().port}`
+        proxy: `https://${PROXY_HOSTNAME}:${proxy.address().port}`
       })
     }, function (err, response, data) {
       if (err) {
@@ -81,7 +83,7 @@ test('http to https', async t => {
 
   const response = await new Promise((resolve, reject) => {
     sget.concat({
-      url: `https://${server.address().address}:${server.address().port}`,
+      url: `https://${SERVER_HOSTNAME}:${server.address().port}`,
       agent: new HttpsProxyAgent({
         keepAlive: true,
         keepAliveMsecs: 1000,
@@ -113,14 +115,14 @@ test('https to https', async t => {
 
   const response = await new Promise((resolve, reject) => {
     sget.concat({
-      url: `https://${server.address().address}:${server.address().port}`,
+      url: `https://${SERVER_HOSTNAME}:${server.address().port}`,
       agent: new HttpsProxyAgent({
         keepAlive: true,
         keepAliveMsecs: 1000,
         maxSockets: 256,
         maxFreeSockets: 256,
         scheduling: 'lifo',
-        proxy: `https://${proxy.address().address}:${proxy.address().port}`
+        proxy: `https://${PROXY_HOSTNAME}:${proxy.address().port}`
       })
     }, function (err, response, data) {
       if (err) {
