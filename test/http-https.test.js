@@ -2,7 +2,7 @@
 
 const https = require('https')
 const test = require('ava')
-const { createSecureServer, createProxy } = require('./utils')
+const { createSecureServer, createProxy, SERVER_HOSTNAME } = require('./utils')
 const { HttpsProxyAgent } = require('../')
 
 function request (opts) {
@@ -20,7 +20,7 @@ test('Basic', async t => {
 
   const response = await request({
     method: 'GET',
-    hostname: server.address().address,
+    hostname: SERVER_HOSTNAME,
     port: server.address().port,
     path: '/',
     agent: new HttpsProxyAgent({
@@ -58,7 +58,7 @@ test('Connection header (keep-alive)', async t => {
 
   const response = await request({
     method: 'GET',
-    hostname: server.address().address,
+    hostname: SERVER_HOSTNAME,
     port: server.address().port,
     path: '/',
     agent: new HttpsProxyAgent({
@@ -96,7 +96,7 @@ test('Connection header (close)', async t => {
 
   const response = await request({
     method: 'GET',
-    hostname: server.address().address,
+    hostname: SERVER_HOSTNAME,
     port: server.address().port,
     path: '/',
     agent: new HttpsProxyAgent({
@@ -133,7 +133,7 @@ test('Proxy authentication (empty)', async t => {
 
   const response = await request({
     method: 'GET',
-    hostname: server.address().address,
+    hostname: SERVER_HOSTNAME,
     port: server.address().port,
     path: '/',
     agent: new HttpsProxyAgent({
@@ -170,7 +170,7 @@ test('Proxy authentication', async t => {
 
   const response = await request({
     method: 'GET',
-    hostname: server.address().address,
+    hostname: SERVER_HOSTNAME,
     port: server.address().port,
     path: '/',
     agent: new HttpsProxyAgent({
@@ -218,7 +218,7 @@ test('Configure the agent to reuse sockets', async t => {
 
   let response = await request({
     method: 'GET',
-    hostname: server.address().address,
+    hostname: SERVER_HOSTNAME,
     port: server.address().port,
     path: '/',
     agent
@@ -235,7 +235,7 @@ test('Configure the agent to reuse sockets', async t => {
 
   response = await request({
     method: 'GET',
-    hostname: server.address().address,
+    hostname: SERVER_HOSTNAME,
     port: server.address().port,
     path: '/',
     agent
@@ -276,7 +276,7 @@ test('Configure the agent to NOT reuse sockets', async t => {
 
   let response = await request({
     method: 'GET',
-    hostname: server.address().address,
+    hostname: SERVER_HOSTNAME,
     port: server.address().port,
     path: '/',
     agent
@@ -293,7 +293,7 @@ test('Configure the agent to NOT reuse sockets', async t => {
 
   response = await request({
     method: 'GET',
-    hostname: server.address().address,
+    hostname: SERVER_HOSTNAME,
     port: server.address().port,
     path: '/',
     agent

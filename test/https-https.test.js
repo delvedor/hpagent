@@ -2,7 +2,7 @@
 
 const https = require('https')
 const test = require('ava')
-const { createSecureServer, createSecureProxy } = require('./utils')
+const { createSecureServer, createSecureProxy, PROXY_HOSTNAME, SERVER_HOSTNAME } = require('./utils')
 const { HttpsProxyAgent } = require('../')
 
 function request (opts) {
@@ -20,7 +20,7 @@ test('Basic', async t => {
 
   const response = await request({
     method: 'GET',
-    hostname: server.address().address,
+    hostname: SERVER_HOSTNAME,
     port: server.address().port,
     path: '/',
     agent: new HttpsProxyAgent({
@@ -29,7 +29,7 @@ test('Basic', async t => {
       maxSockets: 256,
       maxFreeSockets: 256,
       scheduling: 'lifo',
-      proxy: `https://${proxy.address().address}:${proxy.address().port}`
+      proxy: `https://${PROXY_HOSTNAME}:${proxy.address().port}`
     })
   })
 
@@ -58,7 +58,7 @@ test('Connection header (keep-alive)', async t => {
 
   const response = await request({
     method: 'GET',
-    hostname: server.address().address,
+    hostname: SERVER_HOSTNAME,
     port: server.address().port,
     path: '/',
     agent: new HttpsProxyAgent({
@@ -67,7 +67,7 @@ test('Connection header (keep-alive)', async t => {
       maxSockets: 256,
       maxFreeSockets: 256,
       scheduling: 'lifo',
-      proxy: `https://${proxy.address().address}:${proxy.address().port}`
+      proxy: `https://${PROXY_HOSTNAME}:${proxy.address().port}`
     })
   })
 
@@ -96,7 +96,7 @@ test('Connection header (close)', async t => {
 
   const response = await request({
     method: 'GET',
-    hostname: server.address().address,
+    hostname: SERVER_HOSTNAME,
     port: server.address().port,
     path: '/',
     agent: new HttpsProxyAgent({
@@ -105,7 +105,7 @@ test('Connection header (close)', async t => {
       maxSockets: Infinity,
       maxFreeSockets: 256,
       scheduling: 'lifo',
-      proxy: `https://${proxy.address().address}:${proxy.address().port}`
+      proxy: `https://${PROXY_HOSTNAME}:${proxy.address().port}`
     })
   })
 
@@ -133,7 +133,7 @@ test('Proxy authentication (empty)', async t => {
 
   const response = await request({
     method: 'GET',
-    hostname: server.address().address,
+    hostname: SERVER_HOSTNAME,
     port: server.address().port,
     path: '/',
     agent: new HttpsProxyAgent({
@@ -142,7 +142,7 @@ test('Proxy authentication (empty)', async t => {
       maxSockets: 256,
       maxFreeSockets: 256,
       scheduling: 'lifo',
-      proxy: `https://${proxy.address().address}:${proxy.address().port}`
+      proxy: `https://${PROXY_HOSTNAME}:${proxy.address().port}`
     })
   })
 
@@ -170,7 +170,7 @@ test('Proxy authentication', async t => {
 
   const response = await request({
     method: 'GET',
-    hostname: server.address().address,
+    hostname: SERVER_HOSTNAME,
     port: server.address().port,
     path: '/',
     agent: new HttpsProxyAgent({
@@ -179,7 +179,7 @@ test('Proxy authentication', async t => {
       maxSockets: 256,
       maxFreeSockets: 256,
       scheduling: 'lifo',
-      proxy: `https://hello:world@${proxy.address().address}:${proxy.address().port}`
+      proxy: `https://hello:world@${PROXY_HOSTNAME}:${proxy.address().port}`
     })
   })
 
@@ -213,12 +213,12 @@ test('Configure the agent to reuse sockets', async t => {
     maxSockets: 256,
     maxFreeSockets: 256,
     scheduling: 'lifo',
-    proxy: `https://${proxy.address().address}:${proxy.address().port}`
+    proxy: `https://${PROXY_HOSTNAME}:${proxy.address().port}`
   })
 
   let response = await request({
     method: 'GET',
-    hostname: server.address().address,
+    hostname: SERVER_HOSTNAME,
     port: server.address().port,
     path: '/',
     agent
@@ -235,7 +235,7 @@ test('Configure the agent to reuse sockets', async t => {
 
   response = await request({
     method: 'GET',
-    hostname: server.address().address,
+    hostname: SERVER_HOSTNAME,
     port: server.address().port,
     path: '/',
     agent
@@ -271,12 +271,12 @@ test('Configure the agent to NOT reuse sockets', async t => {
     maxSockets: Infinity,
     maxFreeSockets: 256,
     scheduling: 'lifo',
-    proxy: `https://${proxy.address().address}:${proxy.address().port}`
+    proxy: `https://${PROXY_HOSTNAME}:${proxy.address().port}`
   })
 
   let response = await request({
     method: 'GET',
-    hostname: server.address().address,
+    hostname: SERVER_HOSTNAME,
     port: server.address().port,
     path: '/',
     agent
@@ -293,7 +293,7 @@ test('Configure the agent to NOT reuse sockets', async t => {
 
   response = await request({
     method: 'GET',
-    hostname: server.address().address,
+    hostname: SERVER_HOSTNAME,
     port: server.address().port,
     path: '/',
     agent
