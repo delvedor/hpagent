@@ -18,8 +18,6 @@ test('Basic', async t => {
   const proxy = await createSecureProxy()
   server.on('request', (req, res) => res.end('ok'))
 
-  
-
   const response = await request({
     method: 'GET',
     hostname: server.address().address,
@@ -32,7 +30,7 @@ test('Basic', async t => {
       maxFreeSockets: 256,
       scheduling: 'lifo',
       proxy: `https://${PROXY_HOSTNAME}:${proxy.address().port}`
-    }),
+    })
   })
 
   let body = ''

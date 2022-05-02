@@ -30,7 +30,7 @@ test('Basic', async t => {
       maxFreeSockets: 256,
       scheduling: 'lifo',
       proxy: `https://${PROXY_HOSTNAME}:${proxy.address().port}`
-    }),
+    })
   })
 
   let body = ''
