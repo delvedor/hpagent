@@ -379,3 +379,40 @@ test('Timeout', async t => {
   server.close()
   proxy.close()
 })
+
+test('Username and password should not be encoded', async t => {
+  const server = await createServer()
+  const proxy = await createProxy()
+  server.on('request', (req, res) => res.end('ok'))
+
+  proxy.authenticate = function (req, fn) {
+    fn(null, req.headers['proxy-authorization'] === `Basic ${Buffer.from('username_with_=:password_with_=').toString('base64')}`)
+  }
+
+  const response = await request({
+    method: 'GET',
+    hostname: server.address().address,
+    port: server.address().port,
+    path: '/',
+    agent: new HttpProxyAgent({
+      keepAlive: true,
+      keepAliveMsecs: 1000,
+      maxSockets: 256,
+      maxFreeSockets: 256,
+      scheduling: 'lifo',
+      proxy: `http://username_with_=:password_with_=@${proxy.address().address}:${proxy.address().port}`
+    })
+  })
+
+  let body = ''
+  response.setEncoding('utf8')
+  for await (const chunk of response) {
+    body += chunk
+  }
+
+  t.is(body, 'ok')
+  t.is(response.statusCode, 200)
+
+  server.close()
+  proxy.close()
+})

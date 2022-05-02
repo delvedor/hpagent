@@ -330,7 +330,7 @@ test('Timeout', async t => {
         maxSockets: 256,
         maxFreeSockets: 256,
         scheduling: 'lifo',
-        proxy: `http://${proxy.address().address}:${proxy.address().port}`
+        proxy: `https://${PROXY_HOSTNAME}:${proxy.address().port}`
       })
     })
     t.fail('Should throw')
