@@ -30,13 +30,13 @@ const dns = require('dns')
  */
 
 const sslProxy = {
-  key: readFileSync(join(__dirname, 'key_proxy.pem')),
-  cert: readFileSync(join(__dirname, 'cert_proxy.pem'))
+  key: readFileSync(join(__dirname, 'fixtures/key_proxy.pem')),
+  cert: readFileSync(join(__dirname, 'fixtures/cert_proxy.pem'))
 }
 
 const sslServer = {
-  key: readFileSync(join(__dirname, 'key_server.pem')),
-  cert: readFileSync(join(__dirname, 'cert_server.pem'))
+  key: readFileSync(join(__dirname, 'fixtures/key_server.pem')),
+  cert: readFileSync(join(__dirname, 'fixtures/cert_server.pem'))
 }
 
 /**
