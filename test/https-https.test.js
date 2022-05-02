@@ -2,6 +2,7 @@
 
 const https = require('https')
 const test = require('ava')
+const dns = require('dns');
 const { createSecureServer, createSecureProxy } = require('./utils')
 const { HttpsProxyAgent } = require('../')
 
@@ -18,9 +19,27 @@ test('Basic', async t => {
   const proxy = await createSecureProxy()
   server.on('request', (req, res) => res.end('ok'))
 
+  dns.lookup = (hostname, opts, cb) => {
+    cb(null, '127.0.0.1', 4);
+  }
+
+  // const dnsOverrideAgent = new HttpProxyAgent({
+  //   keepAlive: true,
+  //   keepAliveMsecs: 1000,
+  //   maxSockets: 256,
+  //   maxFreeSockets: 256,
+  //   scheduling: 'lifo',
+  //   proxy: `https://proxy-domain.net:${proxy.address().port}`
+  // });
+
+  // We need to override DNS resolution...
+  // dnsOverrideAgent.lookup = (hostname, opts, cb) => {
+  //   cb(null, '127.0.0.1', 4);
+  // } 
+
   const response = await request({
     method: 'GET',
-    hostname: server.address().address,
+    hostname: 'server.unit-test.com',
     port: server.address().port,
     path: '/',
     agent: new HttpsProxyAgent({
@@ -29,8 +48,8 @@ test('Basic', async t => {
       maxSockets: 256,
       maxFreeSockets: 256,
       scheduling: 'lifo',
-      proxy: `https://${proxy.address().address}:${proxy.address().port}`
-    })
+      proxy: `https://proxy-domain.net:${proxy.address().port}`
+    }),
   })
 
   let body = ''
