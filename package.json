@@ -9,11 +9,14 @@
       "require": "./index.js",
       "import": "./index.mjs"
     },
-    "./": "./"
+    "./*": "./*.js"
   },
   "scripts": {
     "test": "standard && NODE_EXTRA_CA_CERTS=test/fixtures/certs_unit_test.pem ava -v test/*.test.js && tsd",
     "test-ci": "standard && ava -v test/*.test.js && tsd"
+  },
+  "engines": {
+    "node": ">=14"
   },
   "repository": {
     "type": "git",
@@ -38,13 +41,13 @@
     "directory": "test"
   },
   "devDependencies": {
-    "ava": "^3.10.1",
-    "got": "^11.5.1",
-    "needle": "^2.5.0",
-    "node-fetch": "^2.6.0",
+    "ava": "^4.2.0",
+    "got": "^11.8.3",
+    "needle": "^3.1.0",
+    "node-fetch": "^2.6.7",
     "proxy": "^1.0.2",
-    "simple-get": "^4.0.0",
-    "standard": "^16.0.1",
-    "tsd": "^0.13.1"
+    "simple-get": "^4.0.1",
+    "standard": "^17.0.0",
+    "tsd": "^0.20.0"
   }
 }
