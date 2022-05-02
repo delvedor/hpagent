@@ -320,7 +320,7 @@ test('Timeout', async t => {
   try {
     await request({
       method: 'GET',
-      hostname: server.address().address,
+      hostname: SERVER_HOSTNAME,
       port: server.address().port,
       path: '/',
       timeout: 1,

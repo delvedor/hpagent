@@ -320,7 +320,7 @@ test('Timeout', async t => {
   try {
     await request({
       method: 'GET',
-      hostname: server.address().address,
+      hostname: SERVER_HOSTNAME,
       port: server.address().port,
       path: '/',
       timeout: 1,
@@ -330,13 +330,50 @@ test('Timeout', async t => {
         maxSockets: 256,
         maxFreeSockets: 256,
         scheduling: 'lifo',
-        proxy: `http://${proxy.address().address}:${proxy.address().port}`
+        proxy: `https://${PROXY_HOSTNAME}:${proxy.address().port}`
       })
     })
     t.fail('Should throw')
   } catch (err) {
     t.is(err.message, 'Proxy timeout')
   }
+
+  server.close()
+  proxy.close()
+})
+
+test('Username and password should not be encoded', async t => {
+  const server = await createSecureServer()
+  const proxy = await createSecureProxy()
+  server.on('request', (req, res) => res.end('ok'))
+
+  proxy.authenticate = function (req, fn) {
+    fn(null, req.headers['proxy-authorization'] === `Basic ${Buffer.from('username_with_=:password_with_=').toString('base64')}`)
+  }
+
+  const response = await request({
+    method: 'GET',
+    hostname: SERVER_HOSTNAME,
+    port: server.address().port,
+    path: '/',
+    agent: new HttpsProxyAgent({
+      keepAlive: true,
+      keepAliveMsecs: 1000,
+      maxSockets: 256,
+      maxFreeSockets: 256,
+      scheduling: 'lifo',
+      proxy: `https://username_with_=:password_with_=@${PROXY_HOSTNAME}:${proxy.address().port}`
+    })
+  })
+
+  let body = ''
+  response.setEncoding('utf8')
+  for await (const chunk of response) {
+    body += chunk
+  }
+
+  t.is(body, 'ok')
+  t.is(response.statusCode, 200)
 
   server.close()
   proxy.close()
