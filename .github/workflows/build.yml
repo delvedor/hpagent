@@ -2,6 +2,9 @@ name: build
 
 on: [push, pull_request]
 
+env:
+  NODE_EXTRA_CA_CERTS: test/certs_unit_test.pem
+
 jobs:
   test:
     name: Test
@@ -20,9 +23,6 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-    - name: Set env var
-      run: |
-        echo "NODE_EXTRA_CA_CERTS=test/certs_unit_test.pem" >> $GITHUB_ENV
     - name: Install
       run: |
         npm install
