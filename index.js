@@ -29,6 +29,10 @@ class HttpProxyAgent extends http.Agent {
       requestOptions.headers['proxy-authorization'] = `Basic ${base64}`
     }
 
+    if (this.proxy.protocol === 'https:') {
+      requestOptions.servername = this.proxy.hostname
+    }
+
     const request = (this.proxy.protocol === 'http:' ? http : https).request(requestOptions)
     request.once('connect', (response, socket, head) => {
       request.removeAllListeners()
