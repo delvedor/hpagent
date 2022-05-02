@@ -349,3 +349,33 @@ test('Test Host Header', async t => {
   server.close()
   proxy.close()
 })
+
+test('Timeout', async t => {
+  const server = await createServer()
+  const proxy = await createProxy()
+  server.on('request', (req, res) => res.end('ok'))
+
+  try {
+    await request({
+      method: 'GET',
+      hostname: server.address().address,
+      port: server.address().port,
+      path: '/',
+      timeout: 1,
+      agent: new HttpProxyAgent({
+        keepAlive: true,
+        keepAliveMsecs: 1000,
+        maxSockets: 256,
+        maxFreeSockets: 256,
+        scheduling: 'lifo',
+        proxy: `http://${proxy.address().address}:${proxy.address().port}`
+      })
+    })
+    t.fail('Should throw')
+  } catch (err) {
+    t.is(err.message, 'Proxy timeout')
+  }
+
+  server.close()
+  proxy.close()
+})
