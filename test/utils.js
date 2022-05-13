@@ -6,6 +6,7 @@ const { join } = require('path')
 const http = require('http')
 const https = require('https')
 const dns = require('dns')
+const { HttpProxyAgent, HttpsProxyAgent } = require('..')
 
 /**
  * We've manually created self signed certificates for the proxy
@@ -52,36 +53,18 @@ dns.lookup = (hostname, opts, cb) => {
   return cb(null, '127.0.0.1', 4)
 }
 
-function createProxy () {
+function createProxy (secureProxy) {
   return new Promise((resolve, reject) => {
-    const server = proxy(http.createServer())
+    const server = proxy((secureProxy ? https : http).createServer(sslProxy))
     server.listen(0, '127.0.0.1', () => {
       resolve(server)
     })
   })
 }
 
-function createSecureProxy () {
+function createServer (secureServer) {
   return new Promise((resolve, reject) => {
-    const server = proxy(https.createServer(sslProxy))
-    server.listen(0, '127.0.0.1', () => {
-      resolve(server)
-    })
-  })
-}
-
-function createServer (handler, callback) {
-  return new Promise((resolve, reject) => {
-    const server = http.createServer()
-    server.listen(0, '127.0.0.1', () => {
-      resolve(server)
-    })
-  })
-}
-
-function createSecureServer (handler, callback) {
-  return new Promise((resolve, reject) => {
-    const server = https.createServer(sslServer)
+    const server = (secureServer ? https : http).createServer(sslServer)
     server.listen(0, '127.0.0.1', () => {
       resolve(server)
     })
@@ -91,11 +74,17 @@ function createSecureServer (handler, callback) {
 const PROXY_HOSTNAME = 'proxy.hpagent-unit-test.com'
 const SERVER_HOSTNAME = 'server.hpagent-unit-test.com'
 
+const testCaseMatrix = [
+  { description: 'HTTP over HTTP', AgentUnderTest: HttpProxyAgent, secureServer: false, secureProxy: false },
+  { description: 'HTTP over HTTPS', AgentUnderTest: HttpProxyAgent, secureServer: false, secureProxy: true },
+  { description: 'HTTPS over HTTP', AgentUnderTest: HttpsProxyAgent, secureServer: true, secureProxy: false },
+  { description: 'HTTPS over HTTPS', AgentUnderTest: HttpsProxyAgent, secureServer: true, secureProxy: true }
+]
+
 module.exports = {
   createProxy,
-  createSecureProxy,
   createServer,
-  createSecureServer,
   PROXY_HOSTNAME,
-  SERVER_HOSTNAME
+  SERVER_HOSTNAME,
+  testCaseMatrix
 }
