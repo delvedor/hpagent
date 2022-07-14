@@ -6,11 +6,12 @@ const { URL } = require('url')
 
 class HttpProxyAgent extends http.Agent {
   constructor (options) {
-    const { proxy, ...opts } = options
+    const { proxy, proxyOptions, ...opts } = options
     super(opts)
     this.proxy = typeof proxy === 'string'
       ? new URL(proxy)
       : proxy
+    this.proxyOptions = proxyOptions
   }
 
   createConnection (options, callback) {
@@ -22,7 +23,8 @@ class HttpProxyAgent extends http.Agent {
       setHost: false,
       headers: { connection: this.keepAlive ? 'keep-alive' : 'close', host: `${options.host}:${options.port}` },
       agent: false,
-      timeout: options.timeout || 0
+      timeout: options.timeout || 0,
+      ...this.proxyOptions
     }
 
     if (this.proxy.username || this.proxy.password) {
@@ -60,11 +62,12 @@ class HttpProxyAgent extends http.Agent {
 
 class HttpsProxyAgent extends https.Agent {
   constructor (options) {
-    const { proxy, ...opts } = options
+    const { proxy, proxyOptions, ...opts } = options
     super(opts)
     this.proxy = typeof proxy === 'string'
       ? new URL(proxy)
       : proxy
+    this.proxyOptions = proxyOptions
   }
 
   createConnection (options, callback) {
@@ -76,7 +79,8 @@ class HttpsProxyAgent extends https.Agent {
       setHost: false,
       headers: { connection: this.keepAlive ? 'keep-alive' : 'close', host: `${options.host}:${options.port}` },
       agent: false,
-      timeout: options.timeout || 0
+      timeout: options.timeout || 0,
+      ...this.proxyOptions
     }
 
     if (this.proxy.username || this.proxy.password) {
