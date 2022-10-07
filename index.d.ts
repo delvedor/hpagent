@@ -7,7 +7,8 @@ declare class HttpProxyAgent extends http.Agent {
 }
 
 interface HttpProxyAgentOptions extends http.AgentOptions {
-  proxy: string | URL
+  proxy: string | URL,
+  proxyRequestOptions?: ProxyAgentRequestOptions
 }
 
 declare class HttpsProxyAgent extends https.Agent {
@@ -15,12 +16,20 @@ declare class HttpsProxyAgent extends https.Agent {
 }
 
 interface HttpsProxyAgentOptions extends https.AgentOptions {
-  proxy: string | URL
+  proxy: string | URL,
+  proxyRequestOptions?: ProxyAgentRequestOptions
+}
+
+interface ProxyAgentRequestOptions {
+  ca?: string[],
+  headers?: Object,
+  rejectUnauthorized?: boolean
 }
 
 export {
   HttpProxyAgent,
   HttpProxyAgentOptions,
   HttpsProxyAgent,
-  HttpsProxyAgentOptions
+  HttpsProxyAgentOptions,
+  ProxyAgentRequestOptions,
 }

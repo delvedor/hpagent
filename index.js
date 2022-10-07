@@ -6,21 +6,23 @@ const { URL } = require('url')
 
 class HttpProxyAgent extends http.Agent {
   constructor (options) {
-    const { proxy, ...opts } = options
+    const { proxy, proxyRequestOptions, ...opts } = options
     super(opts)
     this.proxy = typeof proxy === 'string'
       ? new URL(proxy)
       : proxy
+    this.proxyRequestOptions = proxyRequestOptions || {}
   }
 
   createConnection (options, callback) {
     const requestOptions = {
+      ...this.proxyRequestOptions,
       method: 'CONNECT',
       host: this.proxy.hostname,
       port: this.proxy.port,
       path: `${options.host}:${options.port}`,
       setHost: false,
-      headers: { connection: this.keepAlive ? 'keep-alive' : 'close', host: `${options.host}:${options.port}` },
+      headers: { ...this.proxyRequestOptions.headers, connection: this.keepAlive ? 'keep-alive' : 'close', host: `${options.host}:${options.port}` },
       agent: false,
       timeout: options.timeout || 0
     }
@@ -60,21 +62,23 @@ class HttpProxyAgent extends http.Agent {
 
 class HttpsProxyAgent extends https.Agent {
   constructor (options) {
-    const { proxy, ...opts } = options
+    const { proxy, proxyRequestOptions, ...opts } = options
     super(opts)
     this.proxy = typeof proxy === 'string'
       ? new URL(proxy)
       : proxy
+    this.proxyRequestOptions = proxyRequestOptions || {}
   }
 
   createConnection (options, callback) {
     const requestOptions = {
+      ...this.proxyRequestOptions,
       method: 'CONNECT',
       host: this.proxy.hostname,
       port: this.proxy.port,
       path: `${options.host}:${options.port}`,
       setHost: false,
-      headers: { connection: this.keepAlive ? 'keep-alive' : 'close', host: `${options.host}:${options.port}` },
+      headers: { ...this.proxyRequestOptions.headers, connection: this.keepAlive ? 'keep-alive' : 'close', host: `${options.host}:${options.port}` },
       agent: false,
       timeout: options.timeout || 0
     }

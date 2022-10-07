@@ -64,6 +64,33 @@ http.get('http://localhost:9200', { agent })
     .end()
 ```
 
+You can also pass custom options intended only for the proxy CONNECT request with the `proxyConnectOptions` option,
+such as headers or `tls.connect()` options:
+
+```js
+const fs = require('fs')
+const http = require('http')
+const { HttpProxyAgent } = require('hpagent')
+
+const agent = new HttpProxyAgent({
+  keepAlive: true,
+  keepAliveMsecs: 1000,
+  maxSockets: 256,
+  maxFreeSockets: 256,
+  proxy: 'https://localhost:8080',
+  proxyConnectOptions: {
+    headers: {
+      'Proxy-Authorization': 'Basic YWxhZGRpbjpvcGVuc2VzYW1l',
+    },
+    ca: [ fs.readFileSync('custom-proxy-cert.pem') ]
+  }
+})
+
+http.get('http://localhost:9200', { agent })
+    .on('response', console.log)
+    .end()
+```
+
 ## Integrations
 
 Following you can find the list of userland http libraries that are tested with this agent.

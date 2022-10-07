@@ -341,3 +341,94 @@ test('Timeout', async t => {
   server.close()
   proxy.close()
 })
+
+test('Proxy request options should be passed to the CONNECT request only', async t => {
+  const server = await createServer()
+  const proxy = await createSecureProxy()
+  let serverCustomHeaderReceived
+  let proxyCustomHeaderReceived
+  server.on('request', (req, res) => {
+    serverCustomHeaderReceived = req.headers['x-custom-header']
+    return res.end('ok')
+  })
+  proxy.on('connect', (req) => {
+    proxyCustomHeaderReceived = req.headers['x-custom-header']
+  })
+
+  const response = await request({
+    method: 'GET',
+    hostname: server.address().address,
+    port: server.address().port,
+    path: '/',
+    agent: new HttpProxyAgent({
+      proxyRequestOptions: {
+        headers: {
+          'x-custom-header': 'value'
+        }
+      },
+      keepAlive: true,
+      keepAliveMsecs: 1000,
+      maxSockets: 256,
+      maxFreeSockets: 256,
+      scheduling: 'lifo',
+      proxy: `https://${PROXY_HOSTNAME}:${proxy.address().port}`
+    })
+  })
+
+  let body = ''
+  response.setEncoding('utf8')
+  for await (const chunk of response) {
+    body += chunk
+  }
+
+  t.is(body, 'ok')
+  t.is(response.statusCode, 200)
+  t.falsy(serverCustomHeaderReceived)
+  t.is(proxyCustomHeaderReceived, 'value')
+
+  server.close()
+  proxy.close()
+})
+
+test('Proxy request options should not override internal default options for CONNECT request', async t => {
+  const server = await createServer()
+  const proxy = await createSecureProxy()
+  let proxyConnectionHeaderReceived
+  server.on('request', (req, res) => res.end('ok'))
+  proxy.on('connect', (req) => {
+    proxyConnectionHeaderReceived = req.headers.connection
+  })
+
+  const response = await request({
+    method: 'GET',
+    hostname: server.address().address,
+    port: server.address().port,
+    path: '/',
+    agent: new HttpProxyAgent({
+      proxyRequestOptions: {
+        headers: {
+          connection: 'close'
+        }
+      },
+      keepAlive: true,
+      keepAliveMsecs: 1000,
+      maxSockets: 256,
+      maxFreeSockets: 256,
+      scheduling: 'lifo',
+      proxy: `https://${PROXY_HOSTNAME}:${proxy.address().port}`
+    })
+  })
+
+  let body = ''
+  response.setEncoding('utf8')
+  for await (const chunk of response) {
+    body += chunk
+  }
+
+  t.is(body, 'ok')
+  t.is(response.statusCode, 200)
+  t.is(proxyConnectionHeaderReceived, 'keep-alive')
+
+  server.close()
+  proxy.close()
+})
