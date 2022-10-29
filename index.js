@@ -43,6 +43,7 @@ class HttpProxyAgent extends http.Agent {
       if (response.statusCode === 200) {
         callback(null, socket)
       } else {
+        socket.destroy()
         callback(new Error(`Bad response: ${response.statusCode}`), null)
       }
     })
@@ -101,6 +102,7 @@ class HttpsProxyAgent extends https.Agent {
         const secureSocket = super.createConnection({ ...options, socket })
         callback(null, secureSocket)
       } else {
+        socket.destroy()
         callback(new Error(`Bad response: ${response.statusCode}`), null)
       }
     })
