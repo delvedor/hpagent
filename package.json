@@ -13,7 +13,7 @@
     "./*": "./*.js"
   },
   "scripts": {
-    "test": "standard && NODE_EXTRA_CA_CERTS=test/fixtures/certs_unit_test.pem ava -v test/*.test.js && tsd",
+    "test": "standard && NODE_EXTRA_CA_CERTS=test/fixtures/certs_unit_test.pem ava -v test/*.test.js && NODE_EXTRA_CA_CERTS=test/fixtures/certs_unit_test.pem ./test/hang-socket/runner.sh && tsd",
     "test-ci": "standard && ava -v test/*.test.js && tsd"
   },
   "engines": {
