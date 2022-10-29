@@ -27,6 +27,11 @@ jobs:
       run: |
         npm install
 
-    - name: Test
+    - name: Test / 1
       run: |
         npm run test-ci
+
+    - name: Test / 2
+      working-directory: ../../
+      run: |
+        ./test/hang-socket/runner.sh
