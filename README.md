@@ -1,6 +1,6 @@
 # hpagent
 
-[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com/)  ![build](https://github.com/delvedor/hpagent/workflows/build/badge.svg). ![npm](https://img.shields.io/npm/dm/hpagent)
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com/) ![build](https://github.com/delvedor/hpagent/workflows/build/badge.svg) ![npm](https://img.shields.io/npm/dm/hpagent) [![size](https://packagephobia.com/badge?p=hpagent)](https://packagephobia.com/result?p=hpagent)
 
 A ready to use http and https agent for working with proxies that keeps connections alive!
 
