@@ -42,7 +42,7 @@
     "directory": "test"
   },
   "devDependencies": {
-    "ava": "^4.2.0",
+    "ava": "^5.2.0",
     "got": "^11.8.3",
     "needle": "^3.1.0",
     "node-fetch": "^2.6.7",
