@@ -469,3 +469,36 @@ test('Proxy request options should not override internal default options for CON
   server.close()
   proxy.close()
 })
+
+test('Secure socket creation error should be properly managed', async t => {
+  const server = await createSecureServer()
+  const proxy = await createSecureProxy()
+  server.on('request', (req, res) => res.end('ok'))
+  try {
+    await request({
+      method: 'GET',
+      hostname: SERVER_HOSTNAME,
+      port: server.address().port,
+      path: '/',
+      agent: new HttpsProxyAgent({
+        keepAlive: true,
+        keepAliveMsecs: 1000,
+        maxSockets: 256,
+        maxFreeSockets: 256,
+        scheduling: 'lifo',
+        /**
+         * Enable SSL 2 ways and generate a 'createConnection' error with wrong key/cert pair
+         */
+        key: 'wrongkey',
+        cert: 'wrongca',
+        proxy: `https://${PROXY_HOSTNAME}:${proxy.address().port}`
+      })
+    })
+    t.fail('Should throw')
+  } catch (err) {
+    t.is(err.message, 'error:0909006C:PEM routines:get_name:no start line')
+  }
+
+  server.close()
+  proxy.close()
+})
