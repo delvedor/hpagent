@@ -99,8 +99,13 @@ class HttpsProxyAgent extends https.Agent {
       request.removeAllListeners()
       socket.removeAllListeners()
       if (response.statusCode === 200) {
-        const secureSocket = super.createConnection({ ...options, socket })
-        callback(null, secureSocket)
+        try {
+          const secureSocket = super.createConnection({ ...options, socket })
+          callback(null, secureSocket)
+        } catch (err) {
+          socket.destroy()
+          callback(err, null)
+        }
       } else {
         socket.destroy()
         callback(new Error(`Bad response: ${response.statusCode}`), null)
