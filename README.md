@@ -78,7 +78,7 @@ const agent = new HttpProxyAgent({
   maxSockets: 256,
   maxFreeSockets: 256,
   proxy: 'https://localhost:8080',
-  proxyConnectOptions: {
+  proxyRequestOptions: {
     headers: {
       'Proxy-Authorization': 'Basic YWxhZGRpbjpvcGVuc2VzYW1l',
     },
